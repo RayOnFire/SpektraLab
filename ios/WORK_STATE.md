@@ -66,3 +66,29 @@ footprint and sustained thermal behavior. iPhone takes priority over iPad.
 Source delivery uses `ios/grainroom-source-port` in RayOnFire/SpektraLab.
 No binary release or store upload. Next engineering task: validate the
 documented import/export and memory limits on a physical iPhone.
+
+## iPhone layout revision — 2026-11-05
+
+Authorized: remove the preview frame/margins and allow film/paper selection
+directly on the editor. Only the iOS view, documentation and own demo capture
+change; shared engine/decoder and macOS sources are unchanged.
+
+- Loaded preview keeps its aspect ratio, with no rounded mask, frame or
+  horizontal inset. Metadata and controls keep readable margins.
+- Film and paper are separate horizontal strips of buttons. The selected
+  item is outlined/checked and scrolled into view. Choosing uses the existing
+  model/render path; monochrome paper matching and positive-film behavior
+  stay the same. Both stock-picker sheets were removed.
+- iOS native integration suite: 6 passed, 0 failures/skips. Unsigned arm64
+  device Release build passed. Reuse the earlier macOS gate because neither
+  desktop build inputs nor shared engine/decoder sources changed.
+- Actual Simulator display checked with a user-provided ProRAW: the loaded
+  image fills the screen width and both stock strips are visible. Private
+  input and its screenshot stay outside source control. This is display
+  validation; native tests validate stock/render changes, not automated taps.
+- Updated the public editor screenshot using the app's own synthetic chart
+  in a separate Simulator, preserving the active photo and edits. The
+  temporary preview Simulator was removed after capture.
+
+Source delivery remains on the existing iOS branch. Physical-device
+RAW/export/memory checks remain pending.

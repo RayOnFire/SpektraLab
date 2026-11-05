@@ -7,8 +7,6 @@ struct EditorView: View {
     @Bindable var model: EditorModel
     @State private var selection: PhotosPickerItem?
     @State private var files = false
-    @State private var filmPicker = false
-    @State private var paperPicker = false
     @State private var exporting = false
     @State private var about = false
     @State private var tab = "显影"
@@ -20,19 +18,23 @@ struct EditorView: View {
                     canvas
                     if model.sourceURL != nil {
                         stockRow
-                        Picker("工具", selection: $tab) {
-                            Text("显影").tag("显影"); Text("效果").tag("效果"); Text("构图").tag("构图")
-                        }.pickerStyle(.segmented)
-                        controls
+                        VStack(spacing: 20) {
+                            Picker("工具", selection: $tab) {
+                                Text("显影").tag("显影"); Text("效果").tag("效果"); Text("构图").tag("构图")
+                            }.pickerStyle(.segmented)
+                            controls
+                        }.padding(.horizontal, 16)
                     } else {
-                        Text("从照片或文件导入，在本机完成显影。")
-                            .font(.subheadline).foregroundStyle(.secondary)
-                        importButtons
-                        Button("打开色彩测试图") { Task { await model.demo() } }
-                            .font(.footnote).foregroundStyle(.secondary)
+                        VStack(spacing: 20) {
+                            Text("从照片或文件导入，在本机完成显影。")
+                                .font(.subheadline).foregroundStyle(.secondary)
+                            importButtons
+                            Button("打开色彩测试图") { Task { await model.demo() } }
+                                .font(.footnote).foregroundStyle(.secondary)
+                        }.padding(.horizontal, 16)
                     }
                 }
-                .padding(20)
+                .padding(.vertical, 12)
                 .disabled(model.isExporting)
             }
             .background(Color(white: 0.055))
@@ -77,14 +79,6 @@ struct EditorView: View {
             case .failure(let error): model.error = error.localizedDescription
             }
         }
-        .sheet(isPresented: $filmPicker) {
-            StockPicker(title: "选择胶片", stocks: model.library.films, selected: model.settings.film) { model.chooseFilm($0) }
-        }
-        .sheet(isPresented: $paperPicker) {
-            StockPicker(title: "选择相纸", stocks: model.library.papers(for: model.library.stock(model.settings.film)), selected: model.settings.paper) {
-                model.settings.paper = $0.id; model.schedule()
-            }
-        }
         .sheet(isPresented: $exporting) { ExportView(model: model) }
         .sheet(isPresented: $about) { AboutView() }
         .alert("未能完成", isPresented: Binding(get: { model.error != nil && !exporting }, set: { if !$0 { model.error = nil } })) {
@@ -105,22 +99,19 @@ struct EditorView: View {
     private var canvas: some View {
         VStack(spacing: 12) {
             ZStack {
-                RoundedRectangle(cornerRadius: 14).fill(Color(white: 0.10))
                 if let image = model.showingOriginal ? model.original : model.photo {
-                    Image(uiImage: image).resizable().scaledToFit().padding(8)
+                    Image(uiImage: image).resizable().scaledToFit().frame(maxWidth: .infinity)
                         .accessibilityLabel(model.showingOriginal ? "原图预览" : "胶片显影预览")
                 } else {
                     VStack(spacing: 18) {
                         Image(systemName: "camera.aperture").font(.system(size: 56, weight: .ultraLight)).foregroundStyle(.tint)
                         Text("把照片带进暗房").font(.title3.weight(.medium))
-                    }
+                    }.frame(maxWidth: .infinity, minHeight: 260)
                 }
                 if model.isRendering {
                     ProgressView().padding(14).background(.ultraThinMaterial, in: Circle())
                 }
             }
-            .frame(height: model.sourceURL == nil ? 290 : 310)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
             if model.sourceURL != nil {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
@@ -133,28 +124,23 @@ struct EditorView: View {
                         Label(model.showingOriginal ? "原图" : "对比", systemImage: "square.lefthalf.filled")
                             .font(.caption.weight(.medium))
                     }.buttonStyle(.bordered).disabled(model.original == nil)
-                }
+                }.padding(.horizontal, 16)
             }
         }
     }
 
     private var stockRow: some View {
-        HStack(spacing: 12) {
-            stockButton("胶片", name: model.library.stock(model.settings.film)?.name ?? model.settings.film, symbol: "film") { filmPicker = true }
+        VStack(spacing: 16) {
+            StockStrip(title: "胶片", symbol: "film", stocks: model.library.films, selected: model.settings.film) {
+                model.chooseFilm($0)
+            }
             if model.library.stock(model.settings.film)?.isPositive != true {
-                stockButton("相纸", name: model.library.stock(model.settings.paper)?.name ?? model.settings.paper, symbol: "square.stack") { paperPicker = true }
+                StockStrip(title: "相纸", symbol: "square.stack",
+                           stocks: model.library.papers(for: model.library.stock(model.settings.film)), selected: model.settings.paper) {
+                    model.settings.paper = $0.id; model.schedule()
+                }
             }
         }
-    }
-
-    private func stockButton(_ label: String, name: String, symbol: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: 9) {
-                Label(label, systemImage: symbol).font(.caption).foregroundStyle(.secondary)
-                Text(name).font(.subheadline.weight(.semibold)).lineLimit(2).frame(maxWidth: .infinity, alignment: .leading)
-            }.padding(14).frame(maxWidth: .infinity, minHeight: 95, alignment: .topLeading)
-                .background(Color(white: 0.11), in: RoundedRectangle(cornerRadius: 12))
-        }.buttonStyle(.plain).accessibilityLabel("\(label)：\(name)")
     }
 
     @ViewBuilder private var controls: some View {
@@ -208,35 +194,50 @@ struct EditorView: View {
     }
 }
 
-struct StockPicker: View {
+struct StockStrip: View {
     let title: String
+    let symbol: String
     let stocks: [FilmStock]
     let selected: String
     let choose: (FilmStock) -> Void
-    @State private var query = ""
-    @Environment(\.dismiss) private var dismiss
     var body: some View {
-        NavigationStack {
-            List(stocks.filter { query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) }) { stock in
-                Button {
-                    choose(stock); dismiss()
-                } label: {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(stock.name).foregroundStyle(.primary)
-                            if stock.stage == "filming" {
-                                Text(stock.isPositive ? "反转片" : stock.isMonochrome ? "黑白负片" : "彩色负片")
-                                    .font(.caption).foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Label(title, systemImage: symbol)
+                Spacer()
+                if stocks.count > 2 { Text("滑动选择").font(.caption2) }
+            }.font(.caption).foregroundStyle(.secondary).padding(.horizontal, 16)
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(stocks) { stock in
+                            Button { choose(stock) } label: {
+                                HStack(alignment: .top, spacing: 6) {
+                                    Text(stock.name).lineLimit(2).multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    Image(systemName: "checkmark.circle.fill").foregroundStyle(.tint)
+                                        .opacity(stock.id == selected ? 1 : 0)
+                                }
+                                .font(.caption.weight(.semibold)).foregroundStyle(.primary)
+                                .frame(width: 142, height: 32, alignment: .leading).padding(10)
+                                .background(Color(white: 0.10), in: RoundedRectangle(cornerRadius: 10))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(.tint.opacity(stock.id == selected ? 1 : 0), lineWidth: 1.5)
+                                }
                             }
+                            .buttonStyle(.plain).id(stock.id)
+                            .accessibilityLabel("\(title)：\(stock.name)")
+                            .accessibilityAddTraits(stock.id == selected ? .isSelected : [])
                         }
-                        Spacer()
-                        if stock.id == selected { Image(systemName: "checkmark").foregroundStyle(.tint) }
-                    }
+                    }.padding(.horizontal, 16).padding(.vertical, 2)
                 }
-            }.searchable(text: $query, prompt: "搜索名称")
-                .navigationTitle(title).navigationBarTitleDisplayMode(.inline)
-                .toolbar { Button("完成") { dismiss() } }
-        }.preferredColorScheme(.dark)
+                .onAppear { proxy.scrollTo(selected, anchor: .center) }
+                .onChange(of: selected) { _, value in
+                    withAnimation(.easeInOut(duration: 0.2)) { proxy.scrollTo(value, anchor: .center) }
+                }
+            }
+        }
     }
 }
 
