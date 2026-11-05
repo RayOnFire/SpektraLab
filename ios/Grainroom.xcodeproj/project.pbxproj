@@ -39,11 +39,13 @@
 			sourceTree = "<group>";
 		};
 		65FE6C6951FF36712A3FEC5E /* PhotoExportUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoExportUITests.swift"; sourceTree = "<group>"; };
+		3086042D9F633567E3CFA1A1 /* PhotoImportUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoImportUITests.swift"; sourceTree = "<group>"; };
 		BF25CACD3BF7F64626FFD9B9 /* PhotoViewerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoViewerUITests.swift"; sourceTree = "<group>"; };
 		636FD5917F32D2DEE162C377 /* GrainroomUITests */ = {
 			isa = PBXGroup;
 			children = (
 				65FE6C6951FF36712A3FEC5E /* PhotoExportUITests.swift */,
+				3086042D9F633567E3CFA1A1 /* PhotoImportUITests.swift */,
 				BF25CACD3BF7F64626FFD9B9 /* PhotoViewerUITests.swift */
 			);
 			path = "GrainroomUITests";
@@ -115,8 +117,9 @@
 		753F795913AEE1C70CD8B7F7 = {isa = PBXBuildFile; fileRef = B0216B0B086C93F98F13A2B3; };
 		77A03FEE20FE96AD9384861E = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (E8A90DD7D25A91E981499F6F,753F795913AEE1C70CD8B7F7); runOnlyForDeploymentPostprocessing = 0; };
 		7A80F6C1A2308E37E797EB59 = {isa = PBXBuildFile; fileRef = 65FE6C6951FF36712A3FEC5E; };
+		EF6FD78C2FA43A9A64999CEC = {isa = PBXBuildFile; fileRef = 3086042D9F633567E3CFA1A1; };
 		209BF8B4FF2C01686C6AC121 = {isa = PBXBuildFile; fileRef = BF25CACD3BF7F64626FFD9B9; };
-		4D33AD45EAF7E58DD0F1D97D = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (7A80F6C1A2308E37E797EB59,209BF8B4FF2C01686C6AC121); runOnlyForDeploymentPostprocessing = 0; };
+		4D33AD45EAF7E58DD0F1D97D = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (7A80F6C1A2308E37E797EB59,EF6FD78C2FA43A9A64999CEC,209BF8B4FF2C01686C6AC121); runOnlyForDeploymentPostprocessing = 0; };
 		746DDAFA64B3B89300684432 = {isa = PBXShellScriptBuildPhase; buildActionMask = 2147483647; files = (); inputPaths = (); outputPaths = (); alwaysOutOfDate = 1; name = "Build safe-math engine and bundle licenses"; shellPath = /bin/bash; shellScript = "bash \"$SRCROOT/Tools/build-engine.sh\"\n"; runOnlyForDeploymentPostprocessing = 0; };
 		4E783A9E10D2A8ABA38CD11C = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Grainroom.app; sourceTree = BUILT_PRODUCTS_DIR; includeInIndex = 0; };
 		6C7CCDEB3609F1FAA874E941 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = GrainroomTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; includeInIndex = 0; };

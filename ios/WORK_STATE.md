@@ -2,8 +2,9 @@
 
 Authorized: implement an iPhone-first, offline single-photo editor derived from
 SpektraLab. Publish source only in the user's GitHub fork. Users compile and
-sign their own copies. App Store/TestFlight uploads and binary distribution
-are outside scope.
+sign their own copies. The user also authorized development-signed installation
+on their connected iPhone. App Store/TestFlight uploads and public binary
+distribution are outside scope.
 
 Fork: RayOnFire/SpektraLab; upstream JamesQiu2005/SpektraLab at
 02d82b56cf65f0f8e802a708612edc4e9a4790af. Work branch:
@@ -154,3 +155,29 @@ their production inputs did not change.
 
 Installed the fix on the user's Simulator preserving the current photo/edit.
 Source delivery continues on the same iOS branch; no binary/store release.
+
+## Physical installation and Photos picker — 2026-11-05
+
+Installed the development-signed Release app on the user's iPhone 16 Pro,
+iOS 27.0.1. Strict signature validation and device provisioning checks passed.
+After the user unlocked the phone, the app launched and an actual device
+capture showed the synthetic chart developed by the engine. This verifies
+installation, launch and rendering; it does not establish RAW memory limits
+or a successful device photo-library import/save.
+
+The user then reported that From Photos did nothing. A new UI regression on
+an isolated Simulator reproduced it: tap the toolbar menu, tap From Photos,
+and the menu disappears without presenting the picker. The PhotosPicker was
+inside the transient menu. Replace it with a normal action and attach one
+state-driven `.photosPicker` to the persistent editor. The empty editor uses
+the same action. Image filtering, current encoding and the existing original
+file transfer/import path are unchanged; no library-wide read permission is
+needed for the system picker.
+
+The same presentation regression now passes, including cancel and reopen
+twice while retaining the current edit. The test uses the built-in chart and
+does not select or copy a user's photos. Shared engine, decoder, exporter and
+native viewport inputs are unchanged, so their prior gates remain applicable.
+All three Simulator UI cases passed: picker presentation, actual JPEG save
+to Photos, and full-screen gestures. Project generation/diff checks passed.
+Device presentation verification follows installation of the pushed fix.

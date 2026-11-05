@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 struct EditorView: View {
     @Bindable var model: EditorModel
     @State private var selection: PhotosPickerItem?
+    @State private var photos = false
     @State private var files = false
     @State private var exporting = false
     @State private var about = false
@@ -47,7 +48,7 @@ struct EditorView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        PhotosPicker(selection: $selection, matching: .images, preferredItemEncoding: .current) { Label("从照片导入", systemImage: "photo") }
+                        Button { photos = true } label: { Label("从照片导入", systemImage: "photo") }
                         Button { files = true } label: { Label("从文件导入", systemImage: "folder") }
                         Button("重置调整", role: .destructive) { model.reset() }.disabled(model.sourceURL == nil)
                     } label: { Image(systemName: "plus") }.accessibilityLabel("导入照片")
@@ -63,6 +64,9 @@ struct EditorView: View {
             }
         }
         .accessibilityHidden(fullScreen)
+        // The menu disappears after a tap. Present from the persistent editor
+        // so the photo picker's presentation host survives that dismissal.
+        .photosPicker(isPresented: $photos, selection: $selection, matching: .images, preferredItemEncoding: .current)
         .onChange(of: selection) { _, item in
             guard let item else { return }
             Task {
@@ -94,7 +98,7 @@ struct EditorView: View {
 
     private var importButtons: some View {
         VStack(spacing: 12) {
-            PhotosPicker(selection: $selection, matching: .images, preferredItemEncoding: .current) {
+            Button { photos = true } label: {
                 Label("从照片导入", systemImage: "photo.on.rectangle").frame(maxWidth: .infinity)
             }.buttonStyle(.borderedProminent).controlSize(.large)
             Button { files = true } label: { Label("从文件导入 RAW 或照片", systemImage: "folder").frame(maxWidth: .infinity) }
