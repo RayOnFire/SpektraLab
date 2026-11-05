@@ -1,5 +1,7 @@
 # SpektraLab™
 
+> **本 fork：Grainroom iPhone 移植。** `ios/grainroom-source-port` 分支新增基于原引擎的非官方离线 iOS 编辑器，只发布 GPL-3.0-or-later 源码，供自行编译签名。见 [iOS 编译与使用说明](ios/README.md)。以下保留原桌面项目介绍。
+
 [English](README.md) · **简体中文** · [spektralab.app](https://spektralab.app)
 
 macOS 上的胶片与放大相纸模拟器。打开一张 RAW，选好胶片和相纸，约一秒内得到一张按物理过程建模的照片——颗粒、光晕、成色剂耦合、放大机滤色，一样不少。

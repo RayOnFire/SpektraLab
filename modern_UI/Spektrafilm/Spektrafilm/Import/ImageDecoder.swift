@@ -175,14 +175,16 @@ enum ImageDecoder {
 
     // MARK: decode
 
-    static func decode(_ url: URL, settings: DecodeSettings,
+    static func decode(_ url: URL, settings: DecodeSettings, maxLongEdge: Int? = nil,
                        checkpoint: () throws -> Void = {}) throws -> DecodedImage {
         // A half-frame pair decodes as its two frames on one piece of film.
+        #if os(macOS)
         if HalfFramePair.isPair(url) { return try PairComposer.decode(url, checkpoint: checkpoint) }
+        #endif
         let sourceEXIF = sourceEXIF(from: url)
         return rawExtensions.contains(url.pathExtension.lowercased())
-            ? try decodeRAW(url, settings: settings, sourceEXIF: sourceEXIF, checkpoint: checkpoint)
-            : try decodeFlat(url, sourceEXIF: sourceEXIF, checkpoint: checkpoint)
+            ? try decodeRAW(url, settings: settings, sourceEXIF: sourceEXIF, maxLongEdge: maxLongEdge, checkpoint: checkpoint)
+            : try decodeFlat(url, sourceEXIF: sourceEXIF, maxLongEdge: maxLongEdge, checkpoint: checkpoint)
     }
 
     /// Read metadata once at the door. A side channel, with one exception:
@@ -212,9 +214,15 @@ enum ImageDecoder {
     /// come from this filter itself: constructing a third probe filter costs
     /// another RAW allocation, while an overridden filter no longer exposes
     /// the as-shot pair after the switch below.
-    static func rawFilter(_ url: URL, look: RAWLook, settings: DecodeSettings) throws
+    static func rawFilter(_ url: URL, look: RAWLook, settings: DecodeSettings, maxLongEdge: Int? = nil) throws
         -> (filter: CIRAWFilter, asShotTemperature: Double, asShotTint: Double) {
         guard let filter = CIRAWFilter(imageURL: url) else { throw Failure.rawFilterUnavailable(url) }
+        // Scale before outputImage triggers demosaicing. A small live tier alone
+        // does not bound the full-sized decode and float input allocation.
+        if let edge = maxLongEdge, edge > 0 {
+            let nativeEdge = max(filter.nativeSize.width, filter.nativeSize.height)
+            if nativeEdge > 0 { filter.scaleFactor = Float(min(1, CGFloat(edge) / nativeEdge)) }
+        }
         let asShotTemperature = Double(filter.neutralTemperature)
         let asShotTint = Double(filter.neutralTint)
         // Geometry: identical in both, or the before/after split compares two
@@ -241,16 +249,17 @@ enum ImageDecoder {
 
     private static func decodeRAW(_ url: URL, settings: DecodeSettings,
                                   sourceEXIF: [CFString: Any]?,
+                                  maxLongEdge: Int?,
                                   checkpoint: () throws -> Void) throws -> DecodedImage {
         // A checkpoint before each filter and before each `outputImage` read
         // (which is where the demosaic actually happens) is what makes a
         // superseded decode cost at most one filter.
         try checkpoint()
-        let linearResult = try rawFilter(url, look: .linear, settings: settings)
+        let linearResult = try rawFilter(url, look: .linear, settings: settings, maxLongEdge: maxLongEdge)
         try checkpoint()
         guard let linear = linearResult.filter.outputImage else { throw Failure.unsupported(url) }
         try checkpoint()
-        let displayResult = try rawFilter(url, look: .display, settings: settings)
+        let displayResult = try rawFilter(url, look: .display, settings: settings, maxLongEdge: maxLongEdge)
         let asShotT = displayResult.asShotTemperature
         let asShotTint = displayResult.asShotTint
         try checkpoint()
@@ -264,8 +273,23 @@ enum ImageDecoder {
     }
 
     private static func decodeFlat(_ url: URL, sourceEXIF: [CFString: Any]?,
+                                   maxLongEdge: Int?,
                                    checkpoint: () throws -> Void) throws -> DecodedImage {
         try checkpoint()
+        if let edge = maxLongEdge, edge > 0 {
+            guard let source = CGImageSourceCreateWithURL(url as CFURL, [kCGImageSourceShouldCache: false] as CFDictionary),
+                  let thumb = CGImageSourceCreateThumbnailAtIndex(source, 0, [
+               kCGImageSourceCreateThumbnailFromImageAlways: true,
+               kCGImageSourceCreateThumbnailWithTransform: true,
+               kCGImageSourceThumbnailMaxPixelSize: edge,
+                  ] as CFDictionary) else { throw Failure.unsupported(url) }
+            // A bounded request must never silently fall back to a full-size
+            // decode: on iPhone the float frame alone can exceed its budget.
+            let image = CIImage(cgImage: thumb)
+            return DecodedImage(linear: image, display: image, pixelSize: image.extent.size,
+                                isRAW: false, sourceURL: url, sourceEXIF: sourceEXIF,
+                                asShotTemperature: nil, asShotTint: nil)
+        }
         guard let ci = CIImage(contentsOf: url, options: [.applyOrientationProperty: true]) else {
             throw Failure.unsupported(url)
         }

@@ -1,5 +1,10 @@
 # SpektraLab™
 
+> **Fork: Grainroom for iPhone.** The `ios/grainroom-source-port` branch adds an
+> unofficial, offline iOS editor using the original engine. Source-only,
+> GPL-3.0-or-later; compile and sign your own copy. See [iOS build instructions](ios/README.md).
+> The original desktop project and its documentation follow below.
+
 **English** · [简体中文](README.zh-CN.md) · [spektralab.app](https://spektralab.app)
 
 A film and print simulator for macOS. Open a RAW, pick a film and a paper,

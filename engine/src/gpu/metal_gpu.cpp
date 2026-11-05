@@ -13,6 +13,10 @@
 #include "gpu.hpp"
 
 #include <Metal/Metal.hpp>
+#include <TargetConditionals.h>
+#if TARGET_OS_SIMULATOR
+#include <objc/runtime.h>
+#endif
 
 // For the memory-pressure source (§3.2) and nothing else. Dispatch is in
 // libSystem, so this adds a header and no link step; the `_f` variants below
@@ -682,7 +686,22 @@ public:
         desc->setHeight(height);
         desc->setUsage(MTL::TextureUsageShaderRead);
         desc->setStorageMode(MTL::StorageModeShared);
+        #if TARGET_OS_SIMULATOR
+        // Simulator rejects shared buffer-backed linear textures. The device
+        // path stays zero-copy; only Simulator copies the finished pixels.
+        MTL::Texture* tex = device_->newTexture(desc);
+        if (tex) {
+            tex->replaceRegion(MTL::Region::Make2D(0, 0, width, height), 0,
+                               b->mtl->contents(), size_t(row_stride_px) * 8);
+            // spk_result.rgba16 borrows the same buffer for the texture's
+            // lifetime. A standalone texture must retain that storage too.
+            static char storage_key;
+            objc_setAssociatedObject((id)tex, &storage_key, (id)b->mtl,
+                                     OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        }
+        #else
         MTL::Texture* tex = b->mtl->newTexture(desc, 0, size_t(row_stride_px) * 8);
+        #endif
         desc->release();
         if (!tex) { error = "could not create a texture over the result buffer"; return nullptr; }
         // `newTexture` is already +1 and the texture retains `b->mtl`, so the
