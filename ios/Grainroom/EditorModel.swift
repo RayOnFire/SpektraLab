@@ -140,7 +140,9 @@ final class EditorModel {
             error = "照片保存权限未开启。你也可以使用分享菜单保存到文件。"; return
         }
         do {
-            try await PHPhotoLibrary.shared().performChanges {
+            // Photos invokes this block on its own serial queue. @Sendable
+            // prevents inheriting this model's MainActor isolation in Swift 6.
+            try await PHPhotoLibrary.shared().performChanges { @Sendable in
                 let request = PHAssetCreationRequest.forAsset()
                 request.addResource(with: .photo, fileURL: url, options: nil)
             }

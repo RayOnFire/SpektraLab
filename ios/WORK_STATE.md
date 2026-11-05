@@ -127,3 +127,30 @@ Demo screenshots updated from the running app. Installed the verified app on
 the user's Simulator preserving their current edit. The same real UI gesture
 case also passed with the user's existing ProRAW; its screenshots are kept
 outside source control. Source delivery stays on the existing iOS branch.
+
+## Save-to-Photos crash — 2026-11-05
+
+Authorized: fix the crash when saving an exported photo to Photos and update
+the user's Simulator. Source-only delivery remains in effect.
+
+Crash evidence: SIGTRAP on `com.apple.PHPhotoLibrary.transaction.high`, in
+`EditorModel.saveToPhotos`'s change block through `_swift_task_checkIsolatedSwift`
+and `_dispatch_assert_queue_fail`. The block inherits MainActor isolation from
+EditorModel but Photos executes it on its own queue. The photo-add usage
+description is present; the failure is after export, inside the real write.
+
+Fixed the change block with explicit `@Sendable`, capturing only the file URL.
+Photos can run the block on its queue, while the UI success/error update
+continues on MainActor after await.
+
+Added a UI regression using the app's own synthetic image on an isolated
+Simulator. It generates the JPEG, taps Save to Photos, handles the add-only
+authorization prompt and waits for transaction completion. It refuses a
+restored non-demo photo as input. The original callback reproduced the crash;
+the fixed callback passed. Photos storage contains a new 1200x900 JPEG that
+matches the exported file byte-for-byte. Unsigned arm64 Release build and
+project/diff checks passed. Prior viewer/native/desktop gates remain valid:
+their production inputs did not change.
+
+Installed the fix on the user's Simulator preserving the current photo/edit.
+Source delivery continues on the same iOS branch; no binary/store release.
