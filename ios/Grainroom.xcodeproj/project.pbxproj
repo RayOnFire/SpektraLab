@@ -4,9 +4,11 @@
 		40FAC5DF82C1A10C222DA578 /* EditorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorModel.swift"; sourceTree = "<group>"; };
 		7CB7A4B360E3A148B0A11F54 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditorView.swift"; sourceTree = "<group>"; };
 		E69606FB2390EBDDC7FDC7E1 /* FilmProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FilmProcessor.swift"; sourceTree = "<group>"; };
+		825FDC7FA776394827415DFC /* FullScreenPhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FullScreenPhotoView.swift"; sourceTree = "<group>"; };
 		964F5A109C54018475578C6D /* Grainroom-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Grainroom-Bridging-Header.h"; sourceTree = "<group>"; };
 		752A5EB1A28BAD4D15157065 /* GrainroomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GrainroomApp.swift"; sourceTree = "<group>"; };
 		7847D5EA882D53398BD37EB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
+		F35AC87D443E4B74047C313F /* PhotoPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoPreview.swift"; sourceTree = "<group>"; };
 		75BAE05DA54FF6872163F8A0 /* PhotoSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoSettings.swift"; sourceTree = "<group>"; };
 		12A79996D1CD3BFA6BA936F8 /* Grainroom */ = {
 			isa = PBXGroup;
@@ -15,21 +17,34 @@
 				40FAC5DF82C1A10C222DA578 /* EditorModel.swift */,
 				7CB7A4B360E3A148B0A11F54 /* EditorView.swift */,
 				E69606FB2390EBDDC7FDC7E1 /* FilmProcessor.swift */,
+				825FDC7FA776394827415DFC /* FullScreenPhotoView.swift */,
 				964F5A109C54018475578C6D /* Grainroom-Bridging-Header.h */,
 				752A5EB1A28BAD4D15157065 /* GrainroomApp.swift */,
 				7847D5EA882D53398BD37EB7 /* Info.plist */,
+				F35AC87D443E4B74047C313F /* PhotoPreview.swift */,
 				75BAE05DA54FF6872163F8A0 /* PhotoSettings.swift */
 			);
 			path = "Grainroom";
 			sourceTree = "<group>";
 		};
 		D5EFBF6AD7E2372AFFCE3B23 /* FilmProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FilmProcessorTests.swift"; sourceTree = "<group>"; };
+		B0216B0B086C93F98F13A2B3 /* PhotoViewportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoViewportTests.swift"; sourceTree = "<group>"; };
 		487EDBA5017FEBF9EF1D919C /* GrainroomTests */ = {
 			isa = PBXGroup;
 			children = (
-				D5EFBF6AD7E2372AFFCE3B23 /* FilmProcessorTests.swift */
+				D5EFBF6AD7E2372AFFCE3B23 /* FilmProcessorTests.swift */,
+				B0216B0B086C93F98F13A2B3 /* PhotoViewportTests.swift */
 			);
 			path = "GrainroomTests";
+			sourceTree = "<group>";
+		};
+		BF25CACD3BF7F64626FFD9B9 /* PhotoViewerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoViewerUITests.swift"; sourceTree = "<group>"; };
+		636FD5917F32D2DEE162C377 /* GrainroomUITests */ = {
+			isa = PBXGroup;
+			children = (
+				BF25CACD3BF7F64626FFD9B9 /* PhotoViewerUITests.swift */
+			);
+			path = "GrainroomUITests";
 			sourceTree = "<group>";
 		};
 		88F42962CD56F4CCE51A0AB6 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ImageDecoder.swift"; path = "../modern_UI/Spektrafilm/Spektrafilm/Import/ImageDecoder.swift"; sourceTree = SOURCE_ROOT; };
@@ -61,7 +76,9 @@
 		6EC6556A052B6F94A2877331 = {isa = PBXBuildFile; fileRef = 40FAC5DF82C1A10C222DA578; };
 		D1CD1C541CA06B74F790AD6B = {isa = PBXBuildFile; fileRef = 7CB7A4B360E3A148B0A11F54; };
 		DA91B4AC7B47065E37D52CDF = {isa = PBXBuildFile; fileRef = E69606FB2390EBDDC7FDC7E1; };
+		3D9168D9922E708C7B3341EF = {isa = PBXBuildFile; fileRef = 825FDC7FA776394827415DFC; };
 		3C91C60441643B46FB4EC47D = {isa = PBXBuildFile; fileRef = 752A5EB1A28BAD4D15157065; };
+		695E5C22962F41D89A2F9487 = {isa = PBXBuildFile; fileRef = F35AC87D443E4B74047C313F; };
 		99A20AF87C935E6FCA8ACA20 = {isa = PBXBuildFile; fileRef = 75BAE05DA54FF6872163F8A0; };
 		21EAB12EDDA9F6EA46846BBA = {isa = PBXBuildFile; fileRef = 88F42962CD56F4CCE51A0AB6; };
 		FA3E12A86CA27B7B244F7BA7 = {isa = PBXBuildFile; fileRef = 3710E225F81EDFD3D16AC7D8; };
@@ -88,17 +105,21 @@
 		0D729DC2418E513D42C8F284 = {isa = PBXBuildFile; fileRef = 296F7F0417267D3E21A6EC45; };
 		183AB1276FD18A26011005CF = {isa = PBXBuildFile; fileRef = 59E760BE2413EA0EAAB49701; };
 		6BF5347B6839AA47ACE2CA8E = {isa = PBXBuildFile; fileRef = 290B634D739220311FE373AC; };
-		949D493B91791558E87BC5D7 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (6EC6556A052B6F94A2877331,D1CD1C541CA06B74F790AD6B,DA91B4AC7B47065E37D52CDF,3C91C60441643B46FB4EC47D,99A20AF87C935E6FCA8ACA20,21EAB12EDDA9F6EA46846BBA,FA3E12A86CA27B7B244F7BA7,8A1FC882BDC24D13740B757A,CE3C298F848C526DF8FA8AD9,A0F936557FE2E72F7FE96D0C,5F27DE13C3A789F5D87B419C,1CB0557927FB4F963F725B45,3469454A7EB31183803576CA,9A81ADE4EC6CB269874F93B6,B5BD9159A233CDB97F38891A,7BE9F178C072C4E2FE13D546,D341F0ED18E42DF309715471,B3442925D2DDC36B98D9BC7F,316058052E1374ECBB384FD2,62FEEF7AAD7B66E639706CAF,AB1F19187A579611875BEED1,6B9804C5B3DBC569F6C3645A,E7B32A11D986A861911EAE6D,7179A4C62B878B78B85410B5,02BDB7D3D678CD16457A973A,6270657FA9D0E395FB50B855,F9E1DC975E36BDDB27A7998F,0D729DC2418E513D42C8F284,183AB1276FD18A26011005CF,6BF5347B6839AA47ACE2CA8E); runOnlyForDeploymentPostprocessing = 0; };
+		949D493B91791558E87BC5D7 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (6EC6556A052B6F94A2877331,D1CD1C541CA06B74F790AD6B,DA91B4AC7B47065E37D52CDF,3D9168D9922E708C7B3341EF,3C91C60441643B46FB4EC47D,695E5C22962F41D89A2F9487,99A20AF87C935E6FCA8ACA20,21EAB12EDDA9F6EA46846BBA,FA3E12A86CA27B7B244F7BA7,8A1FC882BDC24D13740B757A,CE3C298F848C526DF8FA8AD9,A0F936557FE2E72F7FE96D0C,5F27DE13C3A789F5D87B419C,1CB0557927FB4F963F725B45,3469454A7EB31183803576CA,9A81ADE4EC6CB269874F93B6,B5BD9159A233CDB97F38891A,7BE9F178C072C4E2FE13D546,D341F0ED18E42DF309715471,B3442925D2DDC36B98D9BC7F,316058052E1374ECBB384FD2,62FEEF7AAD7B66E639706CAF,AB1F19187A579611875BEED1,6B9804C5B3DBC569F6C3645A,E7B32A11D986A861911EAE6D,7179A4C62B878B78B85410B5,02BDB7D3D678CD16457A973A,6270657FA9D0E395FB50B855,F9E1DC975E36BDDB27A7998F,0D729DC2418E513D42C8F284,183AB1276FD18A26011005CF,6BF5347B6839AA47ACE2CA8E); runOnlyForDeploymentPostprocessing = 0; };
 		52DF5EC464F8273B2558D261 = {isa = PBXBuildFile; fileRef = 44DE7BA3B7D5A234FFC6B0DC; };
 		8ECC8B5D05B79F879ACDF1A2 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (52DF5EC464F8273B2558D261); runOnlyForDeploymentPostprocessing = 0; };
 		7561BFB015D8F536760CB671 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 		E8A90DD7D25A91E981499F6F = {isa = PBXBuildFile; fileRef = D5EFBF6AD7E2372AFFCE3B23; };
-		77A03FEE20FE96AD9384861E = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (E8A90DD7D25A91E981499F6F); runOnlyForDeploymentPostprocessing = 0; };
+		753F795913AEE1C70CD8B7F7 = {isa = PBXBuildFile; fileRef = B0216B0B086C93F98F13A2B3; };
+		77A03FEE20FE96AD9384861E = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (E8A90DD7D25A91E981499F6F,753F795913AEE1C70CD8B7F7); runOnlyForDeploymentPostprocessing = 0; };
+		209BF8B4FF2C01686C6AC121 = {isa = PBXBuildFile; fileRef = BF25CACD3BF7F64626FFD9B9; };
+		4D33AD45EAF7E58DD0F1D97D = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (209BF8B4FF2C01686C6AC121); runOnlyForDeploymentPostprocessing = 0; };
 		746DDAFA64B3B89300684432 = {isa = PBXShellScriptBuildPhase; buildActionMask = 2147483647; files = (); inputPaths = (); outputPaths = (); alwaysOutOfDate = 1; name = "Build safe-math engine and bundle licenses"; shellPath = /bin/bash; shellScript = "bash \"$SRCROOT/Tools/build-engine.sh\"\n"; runOnlyForDeploymentPostprocessing = 0; };
 		4E783A9E10D2A8ABA38CD11C = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Grainroom.app; sourceTree = BUILT_PRODUCTS_DIR; includeInIndex = 0; };
 		6C7CCDEB3609F1FAA874E941 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = GrainroomTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; includeInIndex = 0; };
-		FBDC4F23F93125BBEEAE800C = {isa = PBXGroup; name = Products; children = (4E783A9E10D2A8ABA38CD11C,6C7CCDEB3609F1FAA874E941); sourceTree = "<group>"; };
-		B28B7AF69320201D1CF206EB = {isa = PBXGroup; children = (12A79996D1CD3BFA6BA936F8,A51B995684AEC2DD04AF0056,487EDBA5017FEBF9EF1D919C,FBDC4F23F93125BBEEAE800C); sourceTree = "<group>"; };
+		11F49EDBF308A47902D18BBF = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = GrainroomUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; includeInIndex = 0; };
+		FBDC4F23F93125BBEEAE800C = {isa = PBXGroup; name = Products; children = (4E783A9E10D2A8ABA38CD11C,6C7CCDEB3609F1FAA874E941,11F49EDBF308A47902D18BBF); sourceTree = "<group>"; };
+		B28B7AF69320201D1CF206EB = {isa = PBXGroup; children = (12A79996D1CD3BFA6BA936F8,A51B995684AEC2DD04AF0056,487EDBA5017FEBF9EF1D919C,636FD5917F32D2DEE162C377,FBDC4F23F93125BBEEAE800C); sourceTree = "<group>"; };
 		E9B2E96ABC5F6856F2BE79CF = {isa = XCBuildConfiguration; buildSettings = {
 ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 CLANG_CXX_LANGUAGE_STANDARD = "c++20";
@@ -235,6 +256,70 @@ TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Grainroom.app/Grainroom";
 TEST_TARGET_NAME = Grainroom;
 }; name = Release; };
 		57950A58A4374066B2AF45DD = {isa = XCConfigurationList; buildConfigurations = (FCB48D8F88BCDB0ED9FADFD7,942EEBBACD6C88CAE7F29B29); defaultConfigurationName = Release; defaultConfigurationIsVisible = 0; };
+		47EE0C30060FC6CC1F21CC3D = {isa = XCBuildConfiguration; buildSettings = {
+CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+CLANG_CXX_LIBRARY = "libc++";
+CLANG_ENABLE_MODULES = YES;
+CLANG_ENABLE_OBJC_ARC = NO;
+CODE_SIGN_STYLE = Automatic;
+CURRENT_PROJECT_VERSION = 1;
+DEBUG_INFORMATION_FORMAT = "dwarf";
+DEVELOPMENT_TEAM = "";
+ENABLE_TESTABILITY = YES;
+ENABLE_USER_SCRIPT_SANDBOXING = NO;
+GCC_OPTIMIZATION_LEVEL = 2;
+GENERATE_INFOPLIST_FILE = YES;
+HEADER_SEARCH_PATHS = ("$(SRCROOT)/../engine/include","$(SRCROOT)/../engine/src","$(SRCROOT)/../engine/src/core","$(SRCROOT)/../engine/third_party/metal-cpp");
+IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+MARKETING_VERSION = 0.1.0;
+OTHER_CPLUSPLUSFLAGS = "$(inherited) -fblocks";
+OTHER_LDFLAGS = "$(inherited) -lc++ -framework Metal -framework Foundation -framework QuartzCore -framework CoreText -framework CoreGraphics -framework Accelerate";
+PRODUCT_BUNDLE_IDENTIFIER = org.grainroom.editor.uitests;
+PRODUCT_NAME = GrainroomUITests;
+SDKROOT = iphoneos;
+SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+SUPPORTS_MACCATALYST = NO;
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+SWIFT_EMIT_LOC_STRINGS = NO;
+SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+SWIFT_STRICT_CONCURRENCY = complete;
+SWIFT_VERSION = 6.0;
+TARGETED_DEVICE_FAMILY = "1,2";
+TEST_TARGET_NAME = Grainroom;
+}; name = Debug; };
+		EFEA3E580D8A4992F0ECD550 = {isa = XCBuildConfiguration; buildSettings = {
+CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+CLANG_CXX_LIBRARY = "libc++";
+CLANG_ENABLE_MODULES = YES;
+CLANG_ENABLE_OBJC_ARC = NO;
+CODE_SIGN_STYLE = Automatic;
+CURRENT_PROJECT_VERSION = 1;
+DEBUG_INFORMATION_FORMAT = "dwarf";
+DEVELOPMENT_TEAM = "";
+ENABLE_TESTABILITY = NO;
+ENABLE_USER_SCRIPT_SANDBOXING = NO;
+GCC_OPTIMIZATION_LEVEL = 2;
+GENERATE_INFOPLIST_FILE = YES;
+HEADER_SEARCH_PATHS = ("$(SRCROOT)/../engine/include","$(SRCROOT)/../engine/src","$(SRCROOT)/../engine/src/core","$(SRCROOT)/../engine/third_party/metal-cpp");
+IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+MARKETING_VERSION = 0.1.0;
+OTHER_CPLUSPLUSFLAGS = "$(inherited) -fblocks";
+OTHER_LDFLAGS = "$(inherited) -lc++ -framework Metal -framework Foundation -framework QuartzCore -framework CoreText -framework CoreGraphics -framework Accelerate";
+PRODUCT_BUNDLE_IDENTIFIER = org.grainroom.editor.uitests;
+PRODUCT_NAME = GrainroomUITests;
+SDKROOT = iphoneos;
+SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+SUPPORTS_MACCATALYST = NO;
+SWIFT_EMIT_LOC_STRINGS = NO;
+SWIFT_OPTIMIZATION_LEVEL = "-O";
+SWIFT_STRICT_CONCURRENCY = complete;
+SWIFT_VERSION = 6.0;
+TARGETED_DEVICE_FAMILY = "1,2";
+TEST_TARGET_NAME = Grainroom;
+}; name = Release; };
+		3F568A273C5321CFA248D731 = {isa = XCConfigurationList; buildConfigurations = (47EE0C30060FC6CC1F21CC3D,EFEA3E580D8A4992F0ECD550); defaultConfigurationName = Release; defaultConfigurationIsVisible = 0; };
 		89E1FD6268CC0F221A2BE178 = {isa = XCBuildConfiguration; buildSettings = {
 CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 CLANG_CXX_LIBRARY = "libc++";
@@ -295,5 +380,6 @@ TARGETED_DEVICE_FAMILY = "1,2";
 		2A21D9E9044D0B11FAFCCFE3 = {isa = PBXTargetDependency; target = F75109BEB4DD8800DA6B45F8; targetProxy = 3B07A601889A5C98A1E12C74; };
 		F75109BEB4DD8800DA6B45F8 = {isa = PBXNativeTarget; name = Grainroom; productName = Grainroom; productReference = 4E783A9E10D2A8ABA38CD11C; productType = "com.apple.product-type.application"; buildConfigurationList = 3ADB3100893F0122E432328D; buildPhases = (949D493B91791558E87BC5D7,7561BFB015D8F536760CB671,8ECC8B5D05B79F879ACDF1A2,746DDAFA64B3B89300684432); buildRules = (); dependencies = (); };
 		B2BFE0D3C68337315431B2F3 = {isa = PBXNativeTarget; name = GrainroomTests; productName = GrainroomTests; productReference = 6C7CCDEB3609F1FAA874E941; productType = "com.apple.product-type.bundle.unit-test"; buildConfigurationList = 57950A58A4374066B2AF45DD; buildPhases = (77A03FEE20FE96AD9384861E); buildRules = (); dependencies = (2A21D9E9044D0B11FAFCCFE3); };
-		98F54143AB4E86B28C3AFEE0 = {isa = PBXProject; attributes = {LastUpgradeCheck = 2700; TargetAttributes = {B2BFE0D3C68337315431B2F3 = {TestTargetID = F75109BEB4DD8800DA6B45F8; }; }; }; buildConfigurationList = FBD3510CED826C9DAA696E48; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; knownRegions = (en,Base); mainGroup = B28B7AF69320201D1CF206EB; productRefGroup = FBDC4F23F93125BBEEAE800C; projectDirPath = ""; projectRoot = ""; targets = (F75109BEB4DD8800DA6B45F8,B2BFE0D3C68337315431B2F3); };
+		4A85155382D28F64D8E1DBE9 = {isa = PBXNativeTarget; name = GrainroomUITests; productName = GrainroomUITests; productReference = 11F49EDBF308A47902D18BBF; productType = "com.apple.product-type.bundle.ui-testing"; buildConfigurationList = 3F568A273C5321CFA248D731; buildPhases = (4D33AD45EAF7E58DD0F1D97D); buildRules = (); dependencies = (2A21D9E9044D0B11FAFCCFE3); };
+		98F54143AB4E86B28C3AFEE0 = {isa = PBXProject; attributes = {LastUpgradeCheck = 2700; TargetAttributes = {B2BFE0D3C68337315431B2F3 = {TestTargetID = F75109BEB4DD8800DA6B45F8; }; 4A85155382D28F64D8E1DBE9 = {TestTargetID = F75109BEB4DD8800DA6B45F8; }; }; }; buildConfigurationList = FBD3510CED826C9DAA696E48; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; knownRegions = (en,Base); mainGroup = B28B7AF69320201D1CF206EB; productRefGroup = FBDC4F23F93125BBEEAE800C; projectDirPath = ""; projectRoot = ""; targets = (F75109BEB4DD8800DA6B45F8,B2BFE0D3C68337315431B2F3,4A85155382D28F64D8E1DBE9); };
 }; rootObject = 98F54143AB4E86B28C3AFEE0; }

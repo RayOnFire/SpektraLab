@@ -38,7 +38,6 @@ final class EditorModel {
     var isRAW = false
     var isRendering = false
     var isExporting = false
-    var showingOriginal = false
     var error: String?
     var exportURL: URL?
     var notice: String?
@@ -83,7 +82,7 @@ final class EditorModel {
             guard gen == generation else { try? FileManager.default.removeItem(at: destination); return }
             let old = sourceURL
             sourceURL = destination; self.title = title ?? url.deletingPathExtension().lastPathComponent
-            settings = PhotoSettings(); showingOriginal = false
+            settings = PhotoSettings()
             photo = nil; original = nil; exportURL = nil
             save()
             if let old, old.deletingLastPathComponent() == folder { try? FileManager.default.removeItem(at: old) }
@@ -105,7 +104,7 @@ final class EditorModel {
         guard let url = sourceURL, let processor, !isExporting else { return }
         task?.cancel(); generation += 1
         let gen = generation, current = settings, film = library.stock(settings.film)
-        exportURL = nil; isRendering = true; showingOriginal = false
+        exportURL = nil; isRendering = true
         save()
         task = Task { [weak self] in
             do {

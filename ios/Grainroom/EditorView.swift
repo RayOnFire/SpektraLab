@@ -9,6 +9,7 @@ struct EditorView: View {
     @State private var files = false
     @State private var exporting = false
     @State private var about = false
+    @State private var fullScreen = false
     @State private var tab = "显影"
 
     var body: some View {
@@ -61,6 +62,7 @@ struct EditorView: View {
                 }
             }
         }
+        .accessibilityHidden(fullScreen)
         .onChange(of: selection) { _, item in
             guard let item else { return }
             Task {
@@ -81,6 +83,10 @@ struct EditorView: View {
         }
         .sheet(isPresented: $exporting) { ExportView(model: model) }
         .sheet(isPresented: $about) { AboutView() }
+        .fullScreenCover(isPresented: $fullScreen) {
+            if let image = model.photo { FullScreenPhotoView(image: image, original: model.original) }
+        }
+        .onChange(of: model.sourceURL) { _, _ in fullScreen = false }
         .alert("未能完成", isPresented: Binding(get: { model.error != nil && !exporting }, set: { if !$0 { model.error = nil } })) {
             Button("好", role: .cancel) { model.error = nil }
         } message: { Text(model.error ?? "") }
@@ -99,9 +105,10 @@ struct EditorView: View {
     private var canvas: some View {
         VStack(spacing: 12) {
             ZStack {
-                if let image = model.showingOriginal ? model.original : model.photo {
-                    Image(uiImage: image).resizable().scaledToFit().frame(maxWidth: .infinity)
-                        .accessibilityLabel(model.showingOriginal ? "原图预览" : "胶片显影预览")
+                if let image = model.photo {
+                    PhotoPreview(image: image, original: model.original, zoomEnabled: false) { fullScreen = true }
+                        .aspectRatio(image.size.width / image.size.height, contentMode: .fit)
+                        .frame(maxWidth: .infinity)
                 } else {
                     VStack(spacing: 18) {
                         Image(systemName: "camera.aperture").font(.system(size: 56, weight: .ultraLight)).foregroundStyle(.tint)
@@ -120,10 +127,11 @@ struct EditorView: View {
                             .font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Button { model.showingOriginal.toggle() } label: {
-                        Label(model.showingOriginal ? "原图" : "对比", systemImage: "square.lefthalf.filled")
+                    Button { fullScreen = true } label: {
+                        Label("全屏", systemImage: "arrow.up.left.and.arrow.down.right")
                             .font(.caption.weight(.medium))
-                    }.buttonStyle(.bordered).disabled(model.original == nil)
+                    }.buttonStyle(.bordered).disabled(model.photo == nil)
+                        .accessibilityLabel("全屏查看照片")
                 }.padding(.horizontal, 16)
             }
         }

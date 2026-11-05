@@ -15,9 +15,10 @@ spec.loader.exec_module(up)
 up.ROOT = ROOT
 p = up.Project()
 uid = up.uid
-appfiles, testfiles = [], []
+appfiles, testfiles, uifiles = [], [], []
 appgroup = p.group(ROOT / "Grainroom", appfiles)
 testgroup = p.group(ROOT / "GrainroomTests", testfiles)
+uigroup = p.group(ROOT / "GrainroomUITests", uifiles)
 shared = [REPO / "modern_UI/Spektrafilm/Spektrafilm" / f for f in ["Import/ImageDecoder.swift", "Model/DecodeSettings.swift"]]
 engine = up.engine_sources()
 references = []
@@ -44,16 +45,19 @@ sources = phase("app-sources", "PBXSourcesBuildPhase", [(f,q) for f,q in appfile
 resources = phase("app-resources", "PBXResourcesBuildPhase", [(f,q) for f,q in appfiles if q.suffix == ".xcassets"])
 frameworks = phase("frameworks", "PBXFrameworksBuildPhase", [])
 testsrc = phase("test-sources", "PBXSourcesBuildPhase", [(f,q) for f,q in testfiles if q.suffix == ".swift"])
+uisrc = phase("ui-test-sources", "PBXSourcesBuildPhase", [(f,q) for f,q in uifiles if q.suffix == ".swift"])
 bundle = uid("bundle-engine")
 p.add(bundle, '{isa = PBXShellScriptBuildPhase; buildActionMask = 2147483647; files = (); inputPaths = (); outputPaths = (); alwaysOutOfDate = 1; name = "Build safe-math engine and bundle licenses"; shellPath = /bin/bash; shellScript = "bash \\\"$SRCROOT/Tools/build-engine.sh\\\"\\n"; runOnlyForDeploymentPostprocessing = 0; }'.replace('\\\"', '\\"'))
 
 appTarget, testTarget, project = uid("app-target"), uid("tests-target"), uid("project")
+uiTarget, uiProduct = uid("ui-tests-target"), uid("ui-test-product")
 appProduct, testProduct = uid("app-product"), uid("test-product")
 p.add(appProduct, '{isa = PBXFileReference; explicitFileType = wrapper.application; path = Grainroom.app; sourceTree = BUILT_PRODUCTS_DIR; includeInIndex = 0; }')
 p.add(testProduct, '{isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = GrainroomTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; includeInIndex = 0; }')
+p.add(uiProduct, '{isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = GrainroomUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; includeInIndex = 0; }')
 products, main = uid("products"), uid("main")
-p.add(products, f'{{isa = PBXGroup; name = Products; children = ({appProduct},{testProduct}); sourceTree = "<group>"; }}')
-p.add(main, f'{{isa = PBXGroup; children = ({appgroup},{sharedgroup},{testgroup},{products}); sourceTree = "<group>"; }}')
+p.add(products, f'{{isa = PBXGroup; name = Products; children = ({appProduct},{testProduct},{uiProduct}); sourceTree = "<group>"; }}')
+p.add(main, f'{{isa = PBXGroup; children = ({appgroup},{sharedgroup},{testgroup},{uigroup},{products}); sourceTree = "<group>"; }}')
 
 common = {
     "SDKROOT": "iphoneos", "SUPPORTED_PLATFORMS": '"iphoneos iphonesimulator"', "IPHONEOS_DEPLOYMENT_TARGET": "17.0",
@@ -86,13 +90,16 @@ acfg = configurations("app", {"PRODUCT_NAME": "Grainroom", "PRODUCT_BUNDLE_IDENT
 tcfg = configurations("test", {"PRODUCT_NAME": "GrainroomTests", "PRODUCT_BUNDLE_IDENTIFIER": "org.grainroom.editor.tests",
     "GENERATE_INFOPLIST_FILE": "YES", "TEST_HOST": '"$(BUILT_PRODUCTS_DIR)/Grainroom.app/Grainroom"',
     "BUNDLE_LOADER": '"$(TEST_HOST)"', "TEST_TARGET_NAME": "Grainroom"})
+ucfg = configurations("ui-test", {"PRODUCT_NAME": "GrainroomUITests", "PRODUCT_BUNDLE_IDENTIFIER": "org.grainroom.editor.uitests",
+    "GENERATE_INFOPLIST_FILE": "YES", "TEST_TARGET_NAME": "Grainroom"})
 pcfg = configurations("project", {})
 proxy, dependency = uid("testproxy"), uid("testdependency")
 p.add(proxy, f'{{isa = PBXContainerItemProxy; containerPortal = {project}; proxyType = 1; remoteGlobalIDString = {appTarget}; remoteInfo = Grainroom; }}')
 p.add(dependency, f'{{isa = PBXTargetDependency; target = {appTarget}; targetProxy = {proxy}; }}')
 p.add(appTarget, f'{{isa = PBXNativeTarget; name = Grainroom; productName = Grainroom; productReference = {appProduct}; productType = "com.apple.product-type.application"; buildConfigurationList = {acfg}; buildPhases = ({sources},{frameworks},{resources},{bundle}); buildRules = (); dependencies = (); }}')
 p.add(testTarget, f'{{isa = PBXNativeTarget; name = GrainroomTests; productName = GrainroomTests; productReference = {testProduct}; productType = "com.apple.product-type.bundle.unit-test"; buildConfigurationList = {tcfg}; buildPhases = ({testsrc}); buildRules = (); dependencies = ({dependency}); }}')
-p.add(project, f'{{isa = PBXProject; attributes = {{LastUpgradeCheck = 2700; TargetAttributes = {{{testTarget} = {{TestTargetID = {appTarget}; }}; }}; }}; buildConfigurationList = {pcfg}; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; knownRegions = (en,Base); mainGroup = {main}; productRefGroup = {products}; projectDirPath = ""; projectRoot = ""; targets = ({appTarget},{testTarget}); }}')
+p.add(uiTarget, f'{{isa = PBXNativeTarget; name = GrainroomUITests; productName = GrainroomUITests; productReference = {uiProduct}; productType = "com.apple.product-type.bundle.ui-testing"; buildConfigurationList = {ucfg}; buildPhases = ({uisrc}); buildRules = (); dependencies = ({dependency}); }}')
+p.add(project, f'{{isa = PBXProject; attributes = {{LastUpgradeCheck = 2700; TargetAttributes = {{{testTarget} = {{TestTargetID = {appTarget}; }}; {uiTarget} = {{TestTargetID = {appTarget}; }}; }}; }}; buildConfigurationList = {pcfg}; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; knownRegions = (en,Base); mainGroup = {main}; productRefGroup = {products}; projectDirPath = ""; projectRoot = ""; targets = ({appTarget},{testTarget},{uiTarget}); }}')
 text = '// !$*UTF8*$!\n{ archiveVersion = 1; classes = {}; objectVersion = 56; objects = {\n' + '\n'.join(p.objects) + f'\n}}; rootObject = {project}; }}\n'
 out = ROOT / "Grainroom.xcodeproj/project.pbxproj"
 if "--check" in sys.argv:
@@ -103,10 +110,11 @@ else:
     scheme.parent.mkdir(parents=True, exist_ok=True)
     appRef = f'<BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="{appTarget}" BuildableName="Grainroom.app" BlueprintName="Grainroom" ReferencedContainer="container:Grainroom.xcodeproj"/>'
     testRef = f'<BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="{testTarget}" BuildableName="GrainroomTests.xctest" BlueprintName="GrainroomTests" ReferencedContainer="container:Grainroom.xcodeproj"/>'
+    uiRef = f'<BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="{uiTarget}" BuildableName="GrainroomUITests.xctest" BlueprintName="GrainroomUITests" ReferencedContainer="container:Grainroom.xcodeproj"/>'
     scheme.write_text(f'''<?xml version="1.0" encoding="UTF-8"?>
 <Scheme LastUpgradeVersion="2700" version="1.3">
 <BuildAction parallelizeBuildables="YES" buildImplicitDependencies="YES"><BuildActionEntries><BuildActionEntry buildForTesting="YES" buildForRunning="YES" buildForProfiling="YES" buildForArchiving="YES" buildForAnalyzing="YES">{appRef}</BuildActionEntry></BuildActionEntries></BuildAction>
-<TestAction buildConfiguration="Debug" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.IDEFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv="YES"><Testables><TestableReference skipped="NO">{testRef}</TestableReference></Testables></TestAction>
+<TestAction buildConfiguration="Debug" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.IDEFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv="YES"><Testables><TestableReference skipped="NO">{testRef}</TestableReference><TestableReference skipped="NO">{uiRef}</TestableReference></Testables></TestAction>
 <LaunchAction buildConfiguration="Debug" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.IDEFoundation.Launcher.LLDB" launchStyle="0" useCustomWorkingDirectory="NO" ignoresPersistentStateOnLaunch="NO" debugDocumentVersioning="YES" debugServiceExtension="internal" allowLocationSimulation="YES"><BuildableProductRunnable runnableDebuggingMode="0">{appRef}</BuildableProductRunnable></LaunchAction>
 <ProfileAction buildConfiguration="Release"><BuildableProductRunnable runnableDebuggingMode="0">{appRef}</BuildableProductRunnable></ProfileAction><AnalyzeAction buildConfiguration="Debug"/><ArchiveAction buildConfiguration="Release" revealArchiveInOrganizer="YES"/></Scheme>''')
 print("Grainroom project is current")
